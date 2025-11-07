@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const prisma = require('../prisma/client');
-const { createProductSchema, updateProductSchema } = require('../validations/product');
-const generateSlug = require('../middleware/generateSlug');
+const prisma = require('../../prisma/client');
+const { createProductSchema, updateProductSchema } = require('../../validations/product');
+const generateSlug = require('../../middleware/generateSlug');
 
 // Get all products
 router.get('/', async (req, res, next) => {
@@ -47,7 +47,7 @@ router.post('/', generateSlug, async (req, res, next) => {
 });
 
 // Update product with validation
-router.patch('/:id', async (req, res, next) => {
+router.patch('/:id', generateSlug, async (req, res, next) => {
   try {
     const validatedData = updateProductSchema.parse(req.body);
 
