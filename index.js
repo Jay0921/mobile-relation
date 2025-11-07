@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const prisma = require('./prisma/client');
 const errorHandler = require('./middleware/errorHandler');
-const productRoutes = require('./routes/products');
+const routes = require('./routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,13 +11,8 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
-
-// API Routes
-app.use('/products', productRoutes);
+// Mount all routes
+app.use('/', routes);
 
 // 404 handler
 app.use((req, res) => {
