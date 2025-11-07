@@ -9,3 +9,6 @@
 - Do NOT add "Co-Authored-By: Claude" lines
 - Follow conventional commits format: `type: brief description`
   - Examples: `feat: add user authentication`, `fix: resolve database connection issue`
+
+# Styles
+- All generated code must be production-ready, well-structured, and organized according to standard best practices.
