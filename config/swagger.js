@@ -32,6 +32,11 @@ const options = {
               type: 'string',
               description: 'URL-friendly slug',
             },
+            image: {
+              type: 'string',
+              description: 'Product image URL',
+              nullable: true,
+            },
             createdAt: {
               type: 'string',
               format: 'date-time',

@@ -6,11 +6,18 @@ const createProductSchema = z.object({
     .min(1)
     .max(255)
     .regex(/^[a-z0-9-]+$/, 'Slug must contain only lowercase letters, numbers, and hyphens')
-    .optional()
+    .optional(),
+  image: z.string().optional()
 });
 
 const updateProductSchema = z.object({
-  name: z.string().min(1).max(255).optional()
+  name: z.string().min(1).max(255).optional(),
+  slug: z.string()
+    .min(1)
+    .max(255)
+    .regex(/^[a-z0-9-]+$/, 'Slug must contain only lowercase letters, numbers, and hyphens')
+    .optional(),
+  image: z.string().optional()
 });
 
 module.exports = {
