@@ -3,6 +3,7 @@ const router = express.Router();
 const prisma = require('../../prisma/client');
 const { createProductSchema, updateProductSchema } = require('../../validations/product');
 const generateSlug = require('../../middleware/generateSlug');
+const upload = require('../../middleware/upload');
 
 /**
  * @swagger
@@ -81,9 +82,22 @@ router.get('/:id', async (req, res, next) => {
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/ProductInput'
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Product name
+ *               slug:
+ *                 type: string
+ *                 description: URL-friendly slug (auto-generated if not provided)
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Product image file (JPEG, PNG, GIF, or WebP, max 5MB)
  *     responses:
  *       201:
  *         description: Product created successfully
@@ -98,9 +112,17 @@ router.get('/:id', async (req, res, next) => {
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/', generateSlug, async (req, res, next) => {
+router.post('/', upload.single('image'), generateSlug, async (req, res, next) => {
   try {
-    const validatedData = createProductSchema.parse(req.body);
+    const data = { ...req.body };
+
+    // If file was uploaded, add the URL to data
+    if (req.file) {
+      // S3 provides location, local storage needs manual URL construction
+      data.image = req.file.location || `/uploads/${req.file.filename}`;
+    }
+
+    const validatedData = createProductSchema.parse(data);
 
     const product = await prisma.product.create({
       data: validatedData
@@ -128,14 +150,20 @@ router.post('/', generateSlug, async (req, res, next) => {
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
  *               name:
  *                 type: string
+ *                 description: Product name
  *               slug:
  *                 type: string
+ *                 description: URL-friendly slug
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Product image file (JPEG, PNG, GIF, or WebP, max 5MB)
  *     responses:
  *       200:
  *         description: Product updated successfully
@@ -150,9 +178,17 @@ router.post('/', generateSlug, async (req, res, next) => {
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.patch('/:id', generateSlug, async (req, res, next) => {
+router.patch('/:id', upload.single('image'), generateSlug, async (req, res, next) => {
   try {
-    const validatedData = updateProductSchema.parse(req.body);
+    const data = { ...req.body };
+
+    // If file was uploaded, add the URL to data
+    if (req.file) {
+      // S3 provides location, local storage needs manual URL construction
+      data.image = req.file.location || `/uploads/${req.file.filename}`;
+    }
+
+    const validatedData = updateProductSchema.parse(data);
 
     const product = await prisma.product.update({
       where: { id: parseInt(req.params.id) },

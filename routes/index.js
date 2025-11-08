@@ -15,4 +15,8 @@ router.use('/v1', v1Routes);
 // Swagger documentation
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// Serve static files from tmp storage directory
+const path = require('path');
+router.use('/uploads', express.static(path.join(__dirname, '..', 'tmp', 'storage')));
+
 module.exports = router;

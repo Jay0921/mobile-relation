@@ -3,3 +3,12 @@
 
 # dotenv environment variable files
 .env
+
+# Ignore all logfiles and tempfiles.
+/tmp/*
+!/tmp/.keep
+
+# Ignore storage (uploaded files in development).
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
