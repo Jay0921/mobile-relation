@@ -3,6 +3,7 @@ const router = express.Router();
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('../config/swagger');
 const v1Routes = require('./v1');
+const basicAuth = require('express-basic-auth');
 
 // Health check endpoint
 router.get('/health', (req, res) => {
@@ -12,8 +13,13 @@ router.get('/health', (req, res) => {
 // API version routes
 router.use('/v1', v1Routes);
 
-// Swagger documentation
-router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Swagger documentation with basic auth protection
+const swaggerAuth = basicAuth({
+  users: { [process.env.SWAGGER_USERNAME]: process.env.SWAGGER_PASSWORD },
+  challenge: true,
+  realm: 'Swagger Documentation'
+});
+router.use('/api-docs', swaggerAuth, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Serve static files from tmp storage directory
 const path = require('path');
